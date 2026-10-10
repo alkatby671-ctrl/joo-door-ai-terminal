@@ -1,0 +1,1 @@
+{\n  \"buildCommand\": \"npm run build\",\n  \"outputDirectory\": \".next\",\n  \"installCommand\": \"npm install\",\n  \"env\": {\n    \"OPENAI_API_KEY\": \"@openai_api_key\"\n  }\n}\n
