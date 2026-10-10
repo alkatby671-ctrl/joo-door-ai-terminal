@@ -1,0 +1,35 @@
+{
+  "name": "joo-door-ai-ide",
+  "version": "1.0.0",
+  "description": "Professional AI-Powered Web IDE with Terminal, Code Generation & Live Preview",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@monaco-editor/react": "^4.6.0",
+    "axios": "^1.6.0",
+    "zustand": "^4.4.0",
+    "lucide-react": "^0.344.0",
+    "@anthropic-ai/sdk": "^0.20.0",
+    "framer-motion": "^10.16.0",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0",
+    "html-to-image": "^1.11.0",
+    "puppeteer": "^21.0.0",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.3.0",
+    "@types/node": "^20.0.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0"
+  }
+}
