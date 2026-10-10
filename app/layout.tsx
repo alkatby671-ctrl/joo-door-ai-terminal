@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Joo Door AI IDE',
-  description: 'AI workstation for code, interface design, content and terminal execution.',
+  description: 'AI workspace for code, UI design, content generation and safe terminal automation.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>{children}</body>

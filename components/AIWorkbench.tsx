@@ -72,7 +72,7 @@ export default function AIWorkbench() {
   const [files, setFiles] = useState<Record<string, string>>(initialFiles);
   const [selectedFile, setSelectedFile] = useState('src/App.tsx');
   const [chat, setChat] = useState<{ role: 'user' | 'assistant'; content: string }[]>([
-    { role: 'assistant', content: 'مرحبًا، أنا مساعدك التقني. يمكنك طلب تصحيح الكود، إنشاء واجهات، أو تطوير مشروع كامل.' },
+    { role: 'assistant', content: 'مرحبًا، أنا مساعدك التقني في Joo Door AI IDE. يمكنك طلب تصحيح الأكواد، إنشاء واجهات، أو تنفيذ مشروع كامل.' },
   ]);
   const [input, setInput] = useState('');
   const [terminalInput, setTerminalInput] = useState('');
@@ -83,7 +83,6 @@ export default function AIWorkbench() {
   const [isLoading, setIsLoading] = useState(false);
 
   const fileList = useMemo(() => Object.keys(files), [files]);
-
   const activeFile = files[selectedFile] ?? '';
   const extension = selectedFile.split('.').pop() || 'tsx';
   const language = fileExtensions[extension] ?? 'plaintext';
@@ -94,8 +93,8 @@ export default function AIWorkbench() {
 
   const previewHtml = useMemo(() => {
     const html = files['index.html'] ?? '';
-    const app = files['src/App.tsx'] ?? '';
     const style = files['src/styles.css'] ?? '';
+    const app = files['src/App.tsx'] ?? '';
 
     return `
       <html>
@@ -103,15 +102,7 @@ export default function AIWorkbench() {
           <style>${style}</style>
         </head>
         <body>
-          <div id="root">
-            ${app
-              .replace(/export default function App\(\) \{/, '')
-              .replace(/\n\s*return \(/, '')
-              .replace(/\);\n\}/, '')
-              .replace(/<main style=\{\{[^}]+\}\}>/, '<main>')
-              .replace(/<\/main>/, '</main>')
-            }
-          </div>
+          <div id="root">${app.replace(/export default function App\(\) \{/, '').replace(/\n\s*return \(/, '').replace(/\);\n\}/, '')}</div>
         </body>
       </html>
     `;
@@ -142,49 +133,27 @@ export default function AIWorkbench() {
     }
   };
 
-  const handleTerminalRun = () => {
+  const handleTerminalRun = async () => {
     const command = terminalInput.trim();
     if (!command) return;
 
-    const lower = command.toLowerCase();
-    const newLogs = [...terminalLogs, `$ ${command}`];
+    const nextLogs = [...terminalLogs, `$ ${command}`];
 
-    if (lower === 'help') {
-      newLogs.push('Available commands: ls, cat <file>, open <file>, preview, clear, help');
-      setTerminalLogs(newLogs);
-    } else if (lower === 'ls') {
-      newLogs.push(...fileList);
-      setTerminalLogs(newLogs);
-    } else if (lower.startsWith('cat ')) {
-      const file = lower.replace('cat ', '').trim();
-      const target = fileList.find((item) => item.toLowerCase() === file.toLowerCase());
-      if (target) {
-        newLogs.push(files[target]);
-      } else {
-        newLogs.push('File not found');
-      }
-      setTerminalLogs(newLogs);
-    } else if (lower.startsWith('open ')) {
-      const file = lower.replace('open ', '').trim();
-      const target = fileList.find((item) => item.toLowerCase() === file.toLowerCase());
-      if (target) {
-        setSelectedFile(target);
-        newLogs.push(`Opened ${target}`);
-      } else {
-        newLogs.push('File not found');
-      }
-      setTerminalLogs(newLogs);
-    } else if (lower === 'preview') {
-      newLogs.push('Preview mode is active. Open the preview panel to inspect the current design.');
-      setTerminalLogs(newLogs);
-    } else if (lower === 'clear') {
-      setTerminalLogs(['$ clear']);
-    } else {
-      newLogs.push('Command restricted in sandbox mode. Allowed commands: help, ls, cat, open, preview, clear');
-      setTerminalLogs(newLogs);
+    try {
+      const res = await fetch('/api/terminal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command }),
+      });
+
+      const data = await res.json();
+      const output = Array.isArray(data.output) ? data.output : [data.output ?? 'No output'];
+      setTerminalLogs([...nextLogs, ...output]);
+    } catch {
+      setTerminalLogs([...nextLogs, 'Command execution failed.']);
+    } finally {
+      setTerminalInput('');
     }
-
-    setTerminalInput('');
   };
 
   return (
